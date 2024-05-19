@@ -1,31 +1,6 @@
 import pytermgui as ptg
 from localstore import LocalStore
 
-CONFIG = """
-config:
-    InputField:
-        styles:
-            prompt: dim italic
-            cursor: '@72'
-    Label:
-        styles:
-            value: dim bold
-
-    Window:
-        styles:
-            border: '60'
-            corner: '60'
-
-    Container:
-        styles:
-            border: '96'
-            corner: '96'
-"""
-
-with ptg.YamlLoader() as loader:
-    pass
-    #loader.load(CONFIG)
-
 store = LocalStore('db.json')
 
 def submit(button):

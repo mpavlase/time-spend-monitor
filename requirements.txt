@@ -1,3 +1,2 @@
 pytermgui
-PyYAML
 pytest
