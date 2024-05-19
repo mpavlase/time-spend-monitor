@@ -35,7 +35,7 @@ class LocalStore(StoreInterface):
         self.db_filename = db_filename
 
         if db_filename is not None:
-            self.store = self._load_from_db()
+            self.store.update(self._load_from_db())
         print(self.store)
 
     def _load_from_db(self):
@@ -50,9 +50,6 @@ class LocalStore(StoreInterface):
             json.dump(self.store, fd, cls=DateTimeEncoder)
 
     def switch_to(self, project: str, at: Optional[datetime] = None):
-        if project not in self.store:
-            self.store[project] = []
-
         current_project = self.get_current_project()
         if current_project == project:
             return
@@ -89,9 +86,9 @@ class LocalStore(StoreInterface):
 
         return cumulative_spent_times
 
-    def get_current_project(self) -> str:
+    def get_current_project(self) -> Optional[str]:
         if len(self.store) == 0:
-            return '(none)'
+            return None
 
         def compare_fn(project_name: str):
             if project_name not in self.store:
@@ -102,7 +99,7 @@ class LocalStore(StoreInterface):
 
             return self.store[project_name][-1]
 
-        sorted_item = sorted(self.store.keys(), key=compare_fn)
+        sorted_item = sorted(self.store.keys(), key=compare_fn, reverse=True)
 
         return sorted_item[0]
 
