@@ -1,8 +1,9 @@
 from store import StoreInterface
 from typing import Dict, List, Optional
-from datetime import datetime
+from datetime import datetime, timedelta
 from collections import namedtuple, defaultdict
 import json
+import argparse
 
 
 StartedProject = namedtuple('StartedProject',
@@ -36,7 +37,6 @@ class LocalStore(StoreInterface):
 
         if db_filename is not None:
             self.store.update(self._load_from_db())
-        print(self.store)
 
     def _load_from_db(self):
         try:
@@ -117,3 +117,27 @@ class LocalStore(StoreInterface):
 
         return times
 
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-s', '--summary', help='Show summary of time spent per project',
+                        action='store_true',
+                        default=True)
+    parser.add_argument('db_file',
+                        nargs='?',
+                        default='db.json',
+                        help='File with DB (default: db.json)'
+                        )
+
+    args = parser.parse_args()
+
+    if args.summary:
+        store = LocalStore(args.db_file)
+        summary = store.get_total_spent_per_project()
+        current_project = store.get_current_project()
+
+        for project, seconds in summary.items():
+            time = timedelta(seconds=seconds)
+            current_marker = '  <--' if project == current_project else ''
+
+            print(f'{project:20}: {time}{current_marker}')
